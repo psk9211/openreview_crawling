@@ -1,0 +1,4 @@
+# Logfiles
+*.log
+
+sel_driver/*.exe

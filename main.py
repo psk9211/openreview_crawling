@@ -10,6 +10,8 @@ def get_parser():
         description='Openreview.net Crawling',
         formatter_class=configargparse.ArgumentDefaultsHelpFormatter)
     # Task dependent argument
+    parser.add_argument('--base-url', type=str, default='https://openreview.net',
+                        help='Base URL')
     parser.add_argument('--url', type=str, default='https://openreview.net/group?id=ICLR.cc/2020/Conference',
                         help='Target URL')
     parser.add_argument('--keyword', type=str, default='None',
