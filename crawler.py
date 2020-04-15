@@ -27,7 +27,7 @@ class Crawler(object):
     def get_spotlights(self):
         spot_button = self.driver.find_element_by_xpath('//*[@id="notes"]/div/ul/li[3]/a')
         time.sleep(10)
-        self.driver.execute_script("arguments[0].click()", spot_button)
+        self.driver.execute_script("arguments[0].click()", spot_button).select("#accept-spotlight > ul > li")
         spot_list = bs4.BeautifulSoup(self.driver.page_source, "html.parser")
 
     def get_talk(self):
