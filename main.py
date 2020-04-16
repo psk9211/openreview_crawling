@@ -16,7 +16,7 @@ def get_parser():
                         help='Target URL')
     parser.add_argument('--keyword', type=str, default='None',
                         help='Keyword you want to find')
-    parser.add_argument('--mode', type=str, default='find',
+    parser.add_argument('--mode', type=str, default='crawl',
                         help='crawl : get new crawl data\nfind : find the information using keyword')
     parser.add_argument('--dir', type=str, default='./',
                         help='Directory path for saving crawled data')
@@ -29,9 +29,11 @@ if __name__ == '__main__':
     args = parser.parse_args(sys.argv[1:])
 
     if args.mode == 'crawl':
-        crawl_main(args)
+        papers = crawl_main(args)
     elif args.mode == 'find':
         find_main(args)
     else:
         print('Invalid mode argument: ', args.mode)
         exit(0)
+
+    print(papers)

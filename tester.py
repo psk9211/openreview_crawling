@@ -8,6 +8,7 @@ import bs4
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 import parse
+import json
 
 
 if __name__ == "__main__":
@@ -19,27 +20,32 @@ if __name__ == "__main__":
     # exe script 'body > script:nth-child(15)'
     driver.get(url)
 
+
     poster_button = driver.find_element_by_xpath('//*[@id="notes"]/div/ul/li[2]/a')
     time.sleep(10)
     driver.execute_script("arguments[0].click()", poster_button)
 
-    poster = bs4.BeautifulSoup(driver.page_source, "html.parser")
-    papers = poster.select("#accept-poster > ul > li")
-    # "#accept-poster > ul > li:nth-child(1)"
-    # print(paper1)
-    #
-    # paper1_item = paper1[0]
-    # details = paper1_item.get_text()
-    # detailsSpl = details.split("\n")
-    # while "" in detailsSpl:
-    #     detailsSpl.remove("")
-    #
-    # title = detailsSpl[0]
-    # print(title)
+    papers = bs4.BeautifulSoup(driver.page_source, "html.parser").select("#accept-poster > ul > li")
 
-    print(papers)
+    temp_dict = dict()
+    temp_dict['authors'] = papers[0].find('div', {"class": "note-authors"}).get_text(strip=True)
 
+    email_list = papers[0].find_all('a', {"class": "profile-link"})
 
+    email_string =''
+    for email in range(len(email_list)):
+        if email == 0:
+            email_string = email_list[email]['title']
+        else:
+            email_string = email_string + ', ' + email_list[email]['title']
+    temp_dict['emails'] = email_string
+
+    contents = papers[0].find_all('span', {"class": "note-content-value"})
+    contents_title = papers[0].find_all('strong', {"class": "note-content-field"})
+
+    for k in range(len(contents_title)):
+        name = contents_title[k].get_text(strip=True)
+        temp_dict[name] = contents[k].get_text(strip=True)
 
 """
 # Example ID: Syx4wnEtvH

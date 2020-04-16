@@ -2,6 +2,7 @@ from urllib.request import urlopen
 import datetime
 import time
 import bs4
+import json
 from selenium import webdriver
 
 
@@ -22,13 +23,15 @@ class Crawler(object):
         self.driver.execute_script("arguments[0].click()", poster_button)
         poster_list = bs4.BeautifulSoup(self.driver.page_source, "html.parser").select("#accept-poster > ul > li")
 
-        return poster_list
+        return self.save_data(poster_list)
 
     def get_spotlights(self):
         spot_button = self.driver.find_element_by_xpath('//*[@id="notes"]/div/ul/li[3]/a')
         time.sleep(10)
-        self.driver.execute_script("arguments[0].click()", spot_button).select("#accept-spotlight > ul > li")
-        spot_list = bs4.BeautifulSoup(self.driver.page_source, "html.parser")
+        self.driver.execute_script("arguments[0].click()", spot_button)
+        spot_list = bs4.BeautifulSoup(self.driver.page_source, "html.parser").select("#accept-spotlight > ul > li")
+
+        return self.save_data(spot_list)
 
     def get_talk(self):
         talk_button = self.driver.find_element_by_xpath('//*[@id="notes"]/div/ul/li[4]/a')
@@ -36,41 +39,63 @@ class Crawler(object):
         self.driver.execute_script("arguments[0].click()", talk_button)
         talk_list = bs4.BeautifulSoup(self.driver.page_source, "html.parser").select("#accept-talk > ul > li")
 
-    def save_data(self, paper_list):
-        title = []
-        authors = []
-        emails = []
-        abstract = []
-        keywords = []
-        tldr = []
-        github = []
-        forum_link = []
-        pdf_link = []
+        return self.save_data(talk_list)
 
+    def save_data(self, paper_list):
+
+        # dict = {
+        #     'title',
+        #     'authors',
+        #     'emails',
+        #     'abstract',
+        #     'keywords',
+        #     'tldr',
+        #     'github',
+        #     'forum_link',
+        #     'pdf_link'
+        # }
+
+        temp_dict = dict()
+        dict_list = []
+        email_string = ''
+
+        # for paper in range(3):
         for paper in range(len(paper_list)):
-            title.append(paper_list[paper].find('h4').get_text())
-            authors.append(paper_list[paper].find('div', {"class": "note-authors"}).get_text())
-            emails.append(paper_list[paper].find_all('a', {"class": "profile-link"}).get_text())
+            temp_dict['title'] = paper_list[paper].find('h4').get_text(strip=True)
+            temp_dict['authors'] = paper_list[paper].find('div', {"class": "note-authors"}).get_text(strip=True)
+
+            email_list = paper_list[paper].find_all('a', {"class": "profile-link"})
+            for email in range(len(email_list)):
+                if email == 0:
+                    email_string = email_list[email]['title']
+                else:
+                    email_string = email_string + ', ' + email_list[email]['title']
+            temp_dict['emails'] = email_string
 
             contents = paper_list[paper].find_all('span', {"class": "note-content-value"})
-            abstract.append(contents[0].get_text())
-            keywords.append(contents[1].get_text())
-            tldr.append(contents[2].get_text())
-            if len(contents) == 5:
-                github.append(contents[3].a['href'])
-            else:
-                github.append('None')
+            contents_title = paper_list[paper].find_all('strong', {"class": "note-content-field"})
 
-            forum_link.append(self.base_url + paper_list[paper].h4.a['href'])
-            pdf_link.append(self.base_url + paper_list[paper].find('a', {"class": "pdf-link"})['href'])
+            for k in range(len(contents_title)):
+                name = contents_title[k].get_text(strip=True)
+                temp_dict[name] = contents[k].get_text(strip=True)
 
+            temp_dict['forum_link'] = self.base_url + paper_list[paper].h4.a['href']
+            temp_dict['pdf_link'] = self.base_url + paper_list[paper].find('a', {"class": "pdf-link"})['href']
 
+            dict_list.append(temp_dict)
+
+        return dict_list
 
 
 def crawl_main(args):
-    print('crawler')
-    crawl = Crawler()
-    crawl.get_poster()
+    print('In Crawler')
+    print('Start crawling...')
+    crawl = Crawler(args)
+    posters = crawl.get_poster()
+    print('Finish')
+
+    return posters
+
 
 
 """
