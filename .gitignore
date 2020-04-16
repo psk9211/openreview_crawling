@@ -1,4 +1,8 @@
 # Logfiles
 *.log
 
+# driver
 sel_driver/*.exe
+
+# generated json files
+data/*

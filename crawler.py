@@ -15,25 +15,31 @@ class Crawler(object):
         self.driver.get(self.url)
 
     def get_poster(self):
+        self.driver.get(self.url)
         poster_button = self.driver.find_element_by_xpath('//*[@id="notes"]/div/ul/li[2]/a')
-        time.sleep(10)
+        time.sleep(5)
         self.driver.execute_script("arguments[0].click()", poster_button)
+        time.sleep(10)
         poster_list = bs4.BeautifulSoup(self.driver.page_source, "html.parser").select("#accept-poster > ul > li")
 
         return self.save_data(poster_list)
 
     def get_spotlights(self):
+        self.driver.get(self.url)
         spot_button = self.driver.find_element_by_xpath('//*[@id="notes"]/div/ul/li[3]/a')
-        time.sleep(10)
+        time.sleep(5)
         self.driver.execute_script("arguments[0].click()", spot_button)
+        time.sleep(5)
         spot_list = bs4.BeautifulSoup(self.driver.page_source, "html.parser").select("#accept-spotlight > ul > li")
 
         return self.save_data(spot_list)
 
     def get_talk(self):
+        self.driver.get(self.url)
         talk_button = self.driver.find_element_by_xpath('//*[@id="notes"]/div/ul/li[4]/a')
-        time.sleep(10)
+        time.sleep(5)
         self.driver.execute_script("arguments[0].click()", talk_button)
+        time.sleep(5)
         talk_list = bs4.BeautifulSoup(self.driver.page_source, "html.parser").select("#accept-talk > ul > li")
 
         return self.save_data(talk_list)
@@ -75,10 +81,11 @@ class Crawler(object):
 
 def crawl_main(args):
     print('In Crawler')
-    print('Start crawling...')
     crawl = Crawler(args)
-    posters = crawl.get_poster()
+
+    print('Start crawling...')
     spotlights = crawl.get_spotlights()
+    posters = crawl.get_poster()
     talks = crawl.get_talk()
     print('Finish')
 
