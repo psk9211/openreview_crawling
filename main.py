@@ -3,7 +3,6 @@ import configargparse
 
 import utils
 from crawler import crawl_main
-from finder import find_main
 
 
 def get_parser():
@@ -15,10 +14,10 @@ def get_parser():
                         help='Base URL')
     parser.add_argument('--url', type=str, default='https://openreview.net/group?id=ICLR.cc/2020/Conference',
                         help='Target URL')
-    parser.add_argument('--keyword', type=str, default='None',
-                        help='Keyword you want to find')
-    parser.add_argument('--mode', type=str, default='crawl',
-                        help='crawl : get new crawl data\nfind : find the information using keyword')
+    # parser.add_argument('--keyword', type=str, default='None',
+    #                     help='Keyword you want to find')
+    # parser.add_argument('--mode', type=str, default='crawl',
+    #                     help='crawl : get new crawl data\nfind : find the information using keyword')
     parser.add_argument('--dir', type=str, default='./data/',
                         help='Directory path for saving crawled data')
 
@@ -29,18 +28,11 @@ if __name__ == '__main__':
     parser = get_parser()
     args = parser.parse_args(sys.argv[1:])
 
-    if args.mode == 'crawl':
-        posters, spotlights, talks = crawl_main(args)
-        print('Saving crawled data...')
-        utils.save_crawled_data(args, papers=posters, name='poster_')
-        utils.save_crawled_data(args, papers=spotlights, name='spot_lights_')
-        utils.save_crawled_data(args, papers=talks, name='talk_')
-        print('Done.')
-
-    elif args.mode == 'find':
-        find_main(args)
-    else:
-        print('Invalid mode argument: ', args.mode)
-        exit(0)
+    posters, spotlights, talks = crawl_main(args)
+    print('Saving crawled data...')
+    utils.save_crawled_data(args, papers=posters, name='poster_')
+    utils.save_crawled_data(args, papers=spotlights, name='spot_lights_')
+    utils.save_crawled_data(args, papers=talks, name='talk_')
+    print('Done.')
 
     print('Crawling complete!')
