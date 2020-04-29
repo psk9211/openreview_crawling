@@ -4,9 +4,6 @@
 # driver
 sel_driver/*.exe
 
-# generated json files
-data/*
-
 # Selenium
 .idea/*
 
