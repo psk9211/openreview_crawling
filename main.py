@@ -20,6 +20,8 @@ def get_parser():
                         help='crawl : get new crawl data\nfind : find the information using keyword')
     parser.add_argument('--dir', type=str, default='./data/',
                         help='Directory path for saving crawled data')
+    parser.add_argument('--tops', type=int, default=20,
+                        help="The number of keywords")
 
     return parser
 

@@ -44,6 +44,7 @@ def word_cloud(args):
 
         for j in range(len(dict)):
             temp = [x.strip() for x in dict[j]["Keywords:"].split(',')]
+            temp = [x.lower() for x in temp]
             keywords += temp
             total_paper += 1
 
@@ -54,11 +55,11 @@ def word_cloud(args):
     cloud = WordCloud(background_color='white', max_font_size=500, mask=plt_mask, max_words=1500, min_word_length=2)
     cloud.generate_from_frequencies(word_cloud_dict)
 
-    top10 = word_cloud_dict.most_common(10)
+    tops = word_cloud_dict.most_common(args.tops)
     print("Total accepted paper: " + str(total_paper))
-    print("\n*****Top-10 Keywords*****")
-    for i in range(10):
-        print(top10[i][0] + ': ' + str(top10[i][1]) + ' times')
+    print("\n*****Top-{} Keywords*****".format(args.tops))
+    for i in range(args.tops):
+        print(tops[i][0] + ': ' + str(tops[i][1]) + ' times')
     print("*" * 25)
 
     plt.figure(figsize=(20, 10))
